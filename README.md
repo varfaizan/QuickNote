@@ -1,2 +1,2 @@
 # QuickNote
-An easy and efficient way to write quick notes as well as grab links.
+A working chrome extension to take quick and efficient notes as well as grab links.
