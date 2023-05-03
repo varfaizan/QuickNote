@@ -7,50 +7,45 @@
     <title>QuickNote</title>
     <link rel="stylesheet" href="quicknote.css">
     <script src="quicknote.js"></script>
- 
+ </head>
+<body>
+  <div id="bdy">
+   
+    <div id="top_img">  
+      <div  id="cont_heading"><h1 id="note_heading">QuickNote</h1>
+      </div> 
+        </div>                                                      
 
-</head>
-<body id="bdy">
-
-<div id="top_img"></div>
-
-
- <div  id="cont_heading"><h1 id="note_heading">QuickNote</h1></div>
+    <div id="cont_inp">
+          <form>
+             <input  type="text" id="input-el" placeholder="Type here">
+             <input  type="submit" id="input-btn" value="Add Note"></button>
+          </form>
+    </div>
   
-  <div id="cont_inp">
-    <form>
-    <input  type="text" id="input-el" placeholder="Type here">
-    <input  type="submit" id="input-btn" value="Add Note"></button>
-  </form>
-  </div>
-  <form>  
+    <form>  
       <div id="cont_link">
-    <!-- <input  type="text" id="input-el" placeholder="Type here"> -->
-    <!-- <input  type="submit" id="input-btn" value="Save"></button> -->
-    <button id="grab-btn">Grab Link</button>
-    <button  type="button" id="delete-btn" >New Style</button>
-    
-    
+        <button id="grab-btn">Grab Link</button>
+        <button  type="button" id="delete-btn" >New Style</button>
+      </div>
+    </form>
 
-</form>
-</div>
-<div id="cont_ul">
-  
-  <p id="p_chk">Select All<input type="checkbox" class="chk" id="mainchk" ></input></p>
- 
- 
-  <ul id="ul-el">
-       
-  </ul>
+    <div id="cont_ul">
+   
+      <input type="checkbox" class="chk" id="mainchk"><label id="p_chk">Select All</label> </input>
+      <!-- contains empty unordered list to contain listr from js to show notes and links   -->
+      <ul id="ul-el">
+      </ul>
 
-</div>
-<div>
-  <button type="button" id="download">Download</button>
-  <button type="button" id="edit-btn" disabled>Edit</button>
+    </div>
+
+      <div id="cont_dload_edit">
+        <button type="button" id="download">Download</button>
+        <button type="button" id="edit-btn" disabled>Edit</button>
+
+    </div>
 
 </div>
-
-
 
 </body>
 </html>
