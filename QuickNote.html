@@ -11,12 +11,16 @@
 
 </head>
 <body id="bdy">
- 
-  <h1 id="note_heading">QuickNote</h1>
+
+<div id="top_img"></div>
+
+
+ <div  id="cont_heading"><h1 id="note_heading">QuickNote</h1></div>
+  
   <div id="cont_inp">
     <form>
     <input  type="text" id="input-el" placeholder="Type here">
-    <input  type="submit" id="input-btn" value="Save"></button>
+    <input  type="submit" id="input-btn" value="Add Note"></button>
   </form>
   </div>
   <form>  
@@ -24,18 +28,29 @@
     <!-- <input  type="text" id="input-el" placeholder="Type here"> -->
     <!-- <input  type="submit" id="input-btn" value="Save"></button> -->
     <button id="grab-btn">Grab Link</button>
-    <button id="delete-btn">Clear</button>
+    <button  type="button" id="delete-btn" >New Style</button>
     
     
 
 </form>
 </div>
 <div id="cont_ul">
+  
+  <p id="p_chk">Select All<input type="checkbox" class="chk" id="mainchk" ></input></p>
+ 
+ 
   <ul id="ul-el">
-
-        
+       
   </ul>
+
 </div>
+<div>
+  <button type="button" id="download">Download</button>
+  <button type="button" id="edit-btn" disabled>Edit</button>
+
+</div>
+
+
 
 </body>
 </html>
