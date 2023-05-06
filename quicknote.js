@@ -2,20 +2,43 @@ let liStr ='';
 let myLeads = []
 let i=0;
 
+
+
 document.addEventListener('DOMContentLoaded',function(){ //run js only after doc is loaded
     const bdy=document.getElementById('bdy');
     const p_chk=document.getElementById('p_chk');
     const mainchk = document.getElementById('mainchk'); 
     const edit_btn=document.getElementById('edit-btn'); 
     const ulEl = document.getElementById('ul-el');
-    const chkbx = ulEl.getElementsByClassName('chk');
+    let chkbx = ulEl.getElementsByClassName('chk');
     const inputBtn = document.getElementById('input-btn');
     const inputEl = document.getElementById('input-el');
     const delBtn = document.getElementById('delete-btn');
     const grabBtn = document.getElementById('grab-btn');
     const dload=document.getElementById('download');
+    // const li_div = document.getElementById('li_div');
     dload.disabled = true;
     
+  
+    // console.log(chkbx);
+
+    // chkbx.addEventListener('click',function(){
+    //     console.log('Case 1');
+    // })
+
+    inputEl.addEventListener("focus",function()
+    {
+        inputBtn.style.visibility='visible';
+        inputBtn.style.borderBlockColor=  'skyblue';
+    })
+
+
+    inputEl.addEventListener("focusout",function()
+    {
+        inputBtn.style.borderBlockColor=  'whitesmoke';
+    })
+
+
     //set body color to previous value as per change style button click
     bdy.style.background = localStorage.getItem("color");
 
@@ -25,17 +48,27 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
             myLeads=fromLocal;
             renderLeads();
             ulEl.innerHTML = liStr ;
+            
+           
+            
+         
             dload.disabled = false;
             edit_btn.disabled=false;
-            delBtn.disabled=false;
+            // delBtn.disabled=false;
                     }
         //grab url from chrome tab
         grabBtn.addEventListener("click",function(){ 
+            
             chrome.tabs.query({active: true,currentWindow: true},function(tabs){
-            myLeads.push(tabs[0].url);
-            console.log(myLeads);
+                // myLeads = fromLocal;
+                if(myLeads==null){ // otherwise myleads becomes null if fromlocal is deleted
+                    myLeads=[];
+                }
+            myLeads.unshift(tabs[0].url);
             localStorage.setItem('leads',JSON.stringify(myLeads));
             renderLeads();
+
+            
               })
         })
         
@@ -43,9 +76,13 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
         //saving text box entered notes
         inputBtn.addEventListener("click",function(){
             if(inputEl.value==''){
-                console.log('write Something');
+                //do nothing
             } else { 
-                myLeads.push(inputEl.value);
+                // myLeads = fromLocal;
+                if(myLeads==null){ // otherwise myleads becomes null if fromlocal is deleted
+                    myLeads=[];
+                }
+                myLeads.unshift(inputEl.value);
                 localStorage.setItem('leads',JSON.stringify(myLeads));
                 renderLeads();
                 inputEl.value='';
@@ -62,9 +99,9 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
         })
 
     function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
+        let letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
           color += letters[Math.floor(Math.random() * 16)];
         }
         return color;
@@ -74,12 +111,16 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
       edit_btn.addEventListener('click',function(){
         if(edit_btn.textContent === 'Edit'){
             inputBtn.disabled=true;
-            delBtn.disabled=true;
+            // delBtn.disabled=true;
             grabBtn.disabled=true;
             dload.disabled=true;
+         
             edit_btn.textContent='Delete';
+            edit_btn.style.color ='red';
+
             p_chk.style.visibility='visible';
             mainchk.style.visibility = 'visible';
+            // li_div.style.visibility = 'visible';
            
             for(let i=0;i<chkbx.length;i++){
                 chkbx[i].style.visibility = 'visible';
@@ -87,21 +128,24 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
                } 
         else {
              edit_btn.textContent='Edit';
+             edit_btn.style.color ='whitesmoke';
              inputBtn.disabled=false;
-             delBtn.disabled=false;
+            //  delBtn.disabled=false;
              grabBtn.disabled=false;
              p_chk.style.visibility='hidden';
              mainchk.style.visibility = 'hidden';
-       
-               if(mainchk.checked){
+             
 
+               if(mainchk.checked){
                     localStorage.clear();
+                    localStorage.setItem('color',bdy.style.background)
                     edit_btn.disabled=true;
                     myLeads=[];
                     mainchk.parentElement.textContent="";
-                    ulEl.innerHTML="";
+                    
                     edit_btn.textContent = 'Edit'
                     p_chk.innerHTML=''
+                    ulEl.innerHTML="";
         
                 } else{
                      let demoItems = [];
@@ -117,16 +161,26 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
                                     }
                                         }
          
-                     myLeads=demoItems; //here myLeads has elements of demoItems after if and for condition for check box
-                     console.log(myLeads.length);
+                         myLeads=demoItems; //only remaining li items in myLeads 
+                     
                          
                         if(myLeads.length===0){
                             localStorage.clear();
+                            localStorage.setItem('color',bdy.style.background)
                             edit_btn.disabled=true;
                             dload.disabled = true;
                             ulEl.innerHTML="";
                         }else{
+                            localStorage.clear();
+                            localStorage.setItem('color',bdy.style.background)
                             localStorage.setItem('leads',JSON.stringify(myLeads));
+                            myLeads = JSON.parse(localStorage.getItem("leads"));
+                            ulEl.innerHTML="";
+                            liStr = '';
+                            renderLeads();
+                            ulEl.innerHTML = liStr ;
+                           
+                            
                               }
             
                         for(let i=0;i<chkbx.length;i++){
@@ -136,28 +190,30 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
                              }
      
                                   }
-        return false;
+                                  localStorage.setItem('color',bdy.style.background)
+                                  return false;
+       
     })
 
 
         function renderLeads(){
-            for(i;i<myLeads.length;i++){
-                let j =myLeads.length - 1;
+            for(let i=0;i<myLeads.length;i++){
+                
                 let demolead = JSON.stringify(myLeads[i]);
                 let lnkInd = demolead.indexOf('.');
                 // checking whether . is present to verify its link
                     if(lnkInd===-1){
                         liStr += 
                         `<li> 
-                        <input type="checkbox" class="chk" ><label class="lbl">${myLeads[j-i]}</label></input>
+                         <input type="checkbox" class="chk" ></br><label class="lbl">${myLeads[i]}</label></input>
                         </li>` 
            
 
                     }else{
                         liStr += 
                         `<li>
-                        <input type="checkbox" class="chk" ></input> <label class="lbl"><a  
-                        target="_blank" href="${myLeads[j-i]}">${myLeads[j-i]} 
+                        <input type="checkbox" class="chk" ></input><label class="lbl"><a  
+                        target="_blank" href="${myLeads[i]}">${myLeads[i]} 
                         </a></label>
                         </li>`
     
@@ -166,6 +222,70 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
                                }
 
                                     }
+  document.querySelectorAll('.chk').forEach( button => {
+                                       
+       button.onclick = function () {
+
+        if(this.id == 'mainchk'){
+            console.log('got me')
+            if (mainchk.checked==true){
+                for(let i=0;i<chkbx.length;i++){
+                    chkbx[i].checked = true;
+                    console.log('all true');
+             }
+           
+                
+            }else if(mainchk.checked==false){
+                for(let i=0;i<chkbx.length;i++){
+                    chkbx[i].checked = false;
+                    console.log('all false');
+                    }
+                        }
+           }  
+        else {
+
+            console.log('next time')
+            let count = 0;
+            for(let i=0;i<chkbx.length;i++){
+                 if(chkbx[i].checked == true){
+                     console.log('case 1');
+                                    }
+                   else{
+                     count =1;
+                     console.log('case 2');
+                              }
+                                                                     
+                                  }
+                                                             
+                 if(count===1){
+                     console.log('case 3');
+                     mainchk.checked = false;
+                                                     
+                            }
+                 else{
+                     console.log('case 4');
+                     mainchk.checked = true;
+                            }
+
+        }
+       
+       
+       
+
+
+ 
+                                        
+                        }
+                                });
+                                 
+            
+                         
+                                        
+                                    
+
+
+
+
 
         //saving offline on clicking download
         const el = (sel, par) => (par || document).querySelector(sel);
@@ -192,17 +312,27 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
 
         //when select all checkbox is checked
         mainchk.addEventListener('click',function(){
-            if (mainchk.checked){
-                for(let i=0;i<chkbx.length;i++){
-                    chkbx[i].checked = true;
-             }
-            }else{
-                for(let i=0;i<chkbx.length;i++){
-                    chkbx[i].checked = false;
-                    }
-                        }
+          
+            // console.log('inside main chk');
+            // if (mainchk.checked==true){
+            //     for(let i=0;i<chkbx.length;i++){
+            //         chkbx[i].checked = true;
+            //         console.log('all true');
+            //  }
+           
+                
+            // }else if(mainchk.checked==false){
+            //     for(let i=0;i<chkbx.length;i++){
+            //         chkbx[i].checked = false;
+            //         console.log('all false');
+            //         }
+            //             }
        
                              })
  
     return false;
 })
+
+
+
+
