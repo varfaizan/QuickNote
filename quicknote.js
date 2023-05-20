@@ -1,8 +1,28 @@
 let liStr ='';
-let myLeads = []
-let i=0;
+let myLeads = [];
+let noteContent=[];
+let noteContentIndex=0;
+let dateArray = [];
+let dateYearArray=[];
+let fav=[];
+let noteColor=[];
+let flag = 0;
+let editClickStatus = 0;
 
 
+//to manually select note colour
+// let selectedColor;
+// function handleColorChange(event){
+//     selectedColor = event.target.value;
+//     console.log("Selected color:", selectedColor);
+//     notetobeColor();
+
+// }
+
+
+
+
+// console.log("Again Selected color:", selectedColor);
 
 document.addEventListener('DOMContentLoaded',function(){ //run js only after doc is loaded
     const bdy=document.getElementById('bdy');
@@ -13,156 +33,330 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
     let chkbx = ulEl.getElementsByClassName('chk');
     const inputBtn = document.getElementById('input-btn');
     const inputEl = document.getElementById('input-el');
-    const delBtn = document.getElementById('delete-btn');
+    const styleBtn = document.getElementById('new_style');
     const grabBtn = document.getElementById('grab-btn');
     const dload=document.getElementById('download');
-    // const li_div = document.getElementById('li_div');
-    dload.disabled = true;
-    
-  
-    // console.log(chkbx);
-
-    // chkbx.addEventListener('click',function(){
-    //     console.log('Case 1');
-    // })
-
-    inputEl.addEventListener("focus",function()
-    {
-        inputBtn.style.visibility='visible';
-        inputBtn.style.borderBlockColor=  'skyblue';
-    })
-
-
-    inputEl.addEventListener("focusout",function()
-    {
-        inputBtn.style.borderBlockColor=  'whitesmoke';
-    })
-
-
-    //set body color to previous value as per change style button click
-    bdy.style.background = localStorage.getItem("color");
-
-    //get saved notes and links from local storage as arrays by using parse
+    const textArea = document.getElementById('text_area');
+    const contInp = document.getElementById('cont_inp');
+    const showNote = document.getElementById('divshow_note');
+    const containerShowNote = document.getElementById('div_li_shownote')
+    const labelNotes = document.getElementsByClassName('lbl');
+    const labelRecent = document.getElementById('recent_notes');
+    let selectColor = document.getElementById('colorPicker');
     let fromLocal = JSON.parse(localStorage.getItem("leads")); 
-        if(fromLocal){
-            myLeads=fromLocal;
-            renderLeads();
-            ulEl.innerHTML = liStr ;
-            
-           
-            
-         
-            dload.disabled = false;
-            edit_btn.disabled=false;
-            // delBtn.disabled=false;
-                    }
-        //grab url from chrome tab
-        grabBtn.addEventListener("click",function(){ 
-            
-            chrome.tabs.query({active: true,currentWindow: true},function(tabs){
-                // myLeads = fromLocal;
-                if(myLeads==null){ // otherwise myleads becomes null if fromlocal is deleted
-                    myLeads=[];
-                }
-            myLeads.unshift(tabs[0].url);
-            localStorage.setItem('leads',JSON.stringify(myLeads));
-            renderLeads();
+    let fromLocalContent = JSON.parse(localStorage.getItem("Contentleads")); 
+    let fromLocalDate = JSON.parse(localStorage.getItem("date")); 
+    let fromLocalDateYear = JSON.parse(localStorage.getItem("dateYear"))
+    let fromLocalColor = JSON.parse(localStorage.getItem("noteColor"))
+    
+    
+    selectColor.addEventListener('change',function(event){
+          selectedColor = event.target.value;
+          console.log("Selected color:", selectedColor);
+          notetobeColor();
+    })
+      
+     function notetobeColor(){
+        document.getElementById('cont_inp').style.backgroundColor=selectedColor;
+        document.getElementById('text_area').style.backgroundColor=selectedColor;
+        document.getElementById('input-el').style.backgroundColor=selectedColor;
+            };
+    
+    
+    showNote.style.visibility='hidden';
+    dload.disabled = true;  
+     
+    //getting color,date,notes from local storage
+    if(fromLocalColor){
+        noteColor = fromLocalColor;
+        inputEl.style.backgroundColor =  noteColor[0];
+        textArea.style.backgroundColor =   noteColor[0]; 
+        contInp.style.backgroundColor = noteColor[0];
+    
+    } else{
+        noteColor= [];
+    }
 
+
+    if(fromLocalDateYear){
+        dateYearArray = fromLocalDateYear;
+    
+    } else{
+        dateYearArray = [];
+    }
+
+
+
+    if(fromLocalDate){
+        dateArray = fromLocalDate;
+    
+    } else{
+        dateArray = [];
+    }
+
+
+    if(fromLocalContent){
+        noteContent = fromLocalContent;
+    } else{
+        noteContent = [];
+    }
+
+    if(fromLocal){
+        dload.style.visibility='visible';
+        edit_btn.style.visibility='visible';
+        document.getElementById('recent_notes').style.visibility="visible"; 
+        myLeads=fromLocal;
+        renderLeads(); 
+        ulEl.innerHTML = liStr ;                
+        dload.disabled = false;
+        edit_btn.disabled=false;
+        }
+      
+
+
+    //when various buttons on LI or Notes are clicked
+    containerShowNote.onclick = function(event) {
+        let target = getEventTarget(event);    
+        let trial = target.parentElement.textContent;   
+        if(target.tagName==='BUTTON'&&target.textContent=='view'){
+            //getting the precise note index by using date as unique value
+            for(let i=0;i<dateArray.length;i++){
+                if(trial.indexOf(dateArray[i]) !== -1){
+                    noteContentIndex = i;//got the index
+                }else{
+           
+                }
+             }
+        document.getElementById('cont_inp').style.visibility='hidden';
+        showNote.style.backgroundColor=noteColor[noteContentIndex]; //setting note color to the note
+        showNote.style.visibility='visible';
+        showNote.innerHTML =  
+               `<label class='shownote_time'>${dateYearArray[noteContentIndex]}</label>
+                     <label class='shownote_year'>${dateArray[noteContentIndex]}</label>
+                            <input type="checkbox" class="chk" ></br>
+                                 <button class='note_edit'>edit</button>
+                                     <button class='back'>back</button>
+                                         <label class="lblContent">${noteContent[noteContentIndex]}</label>
+                                                  </input> `                
+                
+        }else if(target.tagName==='BUTTON'&&target.textContent=='back'){
+                document.getElementById('cont_inp').style.visibility='visible';
+                showNote.style.visibility='hidden';
+             
+                
+             
+        }else if(target.tagName==='BUTTON'&&target.textContent=='edit'){
+                target.parentElement.innerHTML=
+                        `<button id="save_insideNote">Save</button> 
+                            <input  type="text" id="input_note" placeholder="New Title">
+                                <textarea id="text_insideNote"></textarea>`
+                text_insideNote.value = noteContent[noteContentIndex];
+                input_note.value = myLeads[noteContentIndex];
+                text_insideNote.placeholder = 'write here';
+               
+               
+        
+        }else if(target.tagName==='BUTTON'&&target.textContent=='Save'){
+                labelNotes[noteContentIndex].innerHTML = input_note.value;
+                if(input_note.value==''||text_insideNote.value==''){
+                    input_note.value = 'No Title';
+                    text_insideNote.value = 'Nothing added yet';
+                }
+                
+                myLeads[noteContentIndex] = input_note.value;
+                localStorage.setItem('leads',JSON.stringify(myLeads));               
+                noteContent[noteContentIndex]=text_insideNote.value;
+                change = noteContent[noteContentIndex];
+                localStorage.setItem('Contentleads',JSON.stringify(noteContent));      
+                target.parentElement.innerHTML= 
+                    `<label class='shownote_time'>${dateYearArray[noteContentIndex]}</label>
+                         <label class='shownote_year'>${dateArray[noteContentIndex]}</label>
+                             <input type="checkbox" class="chk" ></br>
+                                 <button class='note_edit'>edit</button>
+                                    <button class='back'>back</button>
+                                        <label class="lblContent">   ${noteContent[noteContentIndex]} </label>
+                                             </input> `
+
+                 
+        }    
+            };
+
+    //grab url from chrome tab
+    grabBtn.addEventListener("click",function(){ 
+        chrome.tabs.query({active: true,currentWindow: true},function(tabs){
+            if(myLeads==null){ // otherwise myleads becomes null if fromlocal is deleted
+                  myLeads=[];
+                }
+        let dateVal = new Date().toLocaleTimeString();
+        dateArray.unshift(dateVal);
+        localStorage.setItem('date',JSON.stringify(dateArray));
+    
+        let dateYearVal = new Date().toLocaleString('en-us',{day:'numeric',month:'short', year:'numeric'})
+        dateYearArray.unshift(dateYearVal);
+        localStorage.setItem('dateYear',JSON.stringify(dateYearArray));
+            
+        textArea.value = tabs[0].url;
+        noteContent.unshift(textArea.value) ;
+        localStorage.setItem('Contentleads',JSON.stringify(noteContent));
+       
+        myLeads.unshift(tabs[0].url);
+        localStorage.setItem('leads',JSON.stringify(myLeads));
+        renderLeads();
+           
             
               })
         })
         
-     
-        //saving text box entered notes
-        inputBtn.addEventListener("click",function(){
+      
+
+
+
+    //saving text box entered notes
+    inputBtn.addEventListener("click",function(){
+            
+        if(inputEl.value == '' && textArea.value==''){
+
+            } 
+        else{
+            let newColor = inputEl.style.backgroundColor;
+            noteColor.unshift(newColor);
+            localStorage.setItem('noteColor',JSON.stringify(noteColor));
+            
+
+            let dateVal = new Date().toLocaleTimeString();
+            dateArray.unshift(dateVal);
+            localStorage.setItem('date',JSON.stringify(dateArray));
+
+            let dateYearVal = new Date().toLocaleString('en-us',{day:'numeric',month:'short', year:'numeric'})
+            dateYearArray.unshift(dateYearVal);
+            localStorage.setItem('dateYear',JSON.stringify(dateYearArray));
+            
+
+            if(textArea.value==''){
+                textArea.value = 'NOTHING ADDED';
+                noteContent.unshift(textArea.value) ;
+                localStorage.setItem('Contentleads',JSON.stringify(noteContent));
+
+            }else{
+                noteContent.unshift(textArea.value) ;
+                localStorage.setItem('Contentleads',JSON.stringify(noteContent));
+            }
+           
+           
             if(inputEl.value==''){
-                //do nothing
-            } else { 
-                // myLeads = fromLocal;
-                if(myLeads==null){ // otherwise myleads becomes null if fromlocal is deleted
-                    myLeads=[];
+                inputEl.value = 'Note - ' + (myLeads.length+1);
+            } 
+
+                
+            if(myLeads==null){ // otherwise myleads becomes null if fromlocal is deleted
+                myLeads=[];
                 }
                 myLeads.unshift(inputEl.value);
                 localStorage.setItem('leads',JSON.stringify(myLeads));
                 renderLeads();
-                inputEl.value='';
-                ulEl.innerHTML = liStr;
-                    }
+                inputEl.value='';                                                                                           
+                ulEl.innerHTML = liStr;                   
                 return false;
-        })
+            }
+            })
     
         //changing color of background
-        delBtn.addEventListener("click",function(){
-            bdy.style.background =  getRandomColor();
-            let newColor = bdy.style.background;
-            localStorage.setItem('color',newColor);//save color to local storage to access next time
+    styleBtn.addEventListener("click",function(){
+        let randomColor = getRandomColor();
+        contInp.style.backgroundColor=randomColor
+        textArea.style.backgroundColor=randomColor
+        inputEl.style.backgroundColor=randomColor          
+        localStorage.setItem('color',randomColor);//save color to local storage to access next time
         })
 
     function getRandomColor() {
         let letters = '0123456789ABCDEF';
         let color = '#';
         for (let i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)];
-        }
+            color += letters[Math.floor(Math.random() * 16)];
+                   }
         return color;
-      }
+                    }
   
       //edit and delete button
-      edit_btn.addEventListener('click',function(){
-        if(edit_btn.textContent === 'Edit'){
+    edit_btn.addEventListener('click',function(){
+        if(editClickStatus===0){
+            labelRecent.style.visibility='hidden';
+            edit_btn.style.backgroundImage='url(delete.png)'
+            editClickStatus = 1 // as it will change to delete functionality
             inputBtn.disabled=true;
-            // delBtn.disabled=true;
             grabBtn.disabled=true;
             dload.disabled=true;
-         
-            edit_btn.textContent='Delete';
-            edit_btn.style.color ='red';
-
+            edit_btn.style.color ='darkred';
             p_chk.style.visibility='visible';
             mainchk.style.visibility = 'visible';
-            // li_div.style.visibility = 'visible';
            
             for(let i=0;i<chkbx.length;i++){
                 chkbx[i].style.visibility = 'visible';
             }
                } 
         else {
-             edit_btn.textContent='Edit';
-             edit_btn.style.color ='whitesmoke';
-             inputBtn.disabled=false;
-            //  delBtn.disabled=false;
-             grabBtn.disabled=false;
-             p_chk.style.visibility='hidden';
-             mainchk.style.visibility = 'hidden';
-             
-
-               if(mainchk.checked){
-                    localStorage.clear();
-                    localStorage.setItem('color',bdy.style.background)
-                    edit_btn.disabled=true;
-                    myLeads=[];
-                    mainchk.parentElement.textContent="";
-                    
-                    edit_btn.textContent = 'Edit'
-                    p_chk.innerHTML=''
-                    ulEl.innerHTML="";
+            labelRecent.style.visibility='visible';
+            edit_btn.style.backgroundImage='url(edit.png)'
+            editClickStatus=0
+            edit_btn.style.color ='whitesmoke';
+            inputBtn.disabled=false;
+            grabBtn.disabled=false;
+            p_chk.style.visibility='hidden';
+            mainchk.style.visibility = 'hidden';
+            if(mainchk.checked){//meaning all items will be deleted
+                //everything is basically set to default
+                localStorage.clear();
+                localStorage.setItem('color',bdy.style.background)
+                edit_btn.disabled=true;
+                myLeads=[];
+                dateArray=[];
+                dateYearArray=[];
+                noteContent=[];
+                noteContentIndex=0;
+                mainchk.parentElement.textContent="";
+                edit_btn.textContent = 'Edit'
+                p_chk.innerHTML=''
+                ulEl.innerHTML="";
         
-                } else{
-                     let demoItems = [];
-                     let j=0;
-                        //to delete selected individual items
+            } else{ //meaning only selected items are to be deleted 
+                //saving a copy of current arrays we have, as original will be modified to contain selected items only
+                myLeadsCopy = myLeads;
+                noteContentCopy = noteContent;
+                dateArrayCopy =  dateArray;
+                dateYearArrayCopy = dateYearArray;
+                noteColorCopy = noteColor;
+                let demoNotes = [];
+                let demoItems = [];
+                let demoDate=[];
+                let demoDateYear=[];
+                let demoColor = []
+                let j=0;
+                let k=0;
+                     
+                        //to delete selected individual checked items
                          for(let i=0;i<chkbx.length;i++){
                               if(chkbx[i].checked){
                                  chkbx[i].parentElement.innerHTML='';
                                  i=i-1;
+                                 
+                                 
                               }else{
-                                 demoItems[j] = chkbx[i].parentElement.textContent; 
+                                    demoColor[j] = noteColorCopy[k];
+                                    demoItems[j] = myLeadsCopy[k];
+                                    demoNotes[j] = noteContentCopy[k];
+                                    demoDate[j] = dateArrayCopy[k];
+                                    demoDateYear[j] = dateYearArrayCopy[k];
                                  j++;
                                     }
-                                        }
-         
-                         myLeads=demoItems; //only remaining li items in myLeads 
-                     
+                        k++; 
+                                         }  
+                        noteColor = demoColor;                 
+                        dateArray = demoDate;
+                        dateYearArray = demoDateYear;                 
+                        noteContent = demoNotes;
+                        myLeads=demoItems; //only remaining li items in myLeads 
+                              
                          
                         if(myLeads.length===0){
                             localStorage.clear();
@@ -172,15 +366,28 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
                             ulEl.innerHTML="";
                         }else{
                             localStorage.clear();
-                            localStorage.setItem('color',bdy.style.background)
-                            localStorage.setItem('leads',JSON.stringify(myLeads));
+                            localStorage.setItem('color',bdy.style.background);
+                            
+                            localStorage.setItem('leads', JSON.stringify(myLeads));
                             myLeads = JSON.parse(localStorage.getItem("leads"));
+
+                            localStorage.setItem('Contentleads',JSON.stringify(noteContent));
+                            noteContent = JSON.parse(localStorage.getItem("Contentleads"));
+
+                            localStorage.setItem('date',JSON.stringify(dateArray));
+                            dateArray = JSON.parse(localStorage.getItem("date"));
+                           
+                            localStorage.setItem('dateYear',JSON.stringify(dateYearArray));
+                            dateYearArray = JSON.parse(localStorage.getItem("dateYear"));
+
+                            localStorage.setItem('noteColor',JSON.stringify(noteColor));
+                            noteColor = JSON.parse(localStorage.getItem("noteColor"));
+
+                            
                             ulEl.innerHTML="";
                             liStr = '';
                             renderLeads();
                             ulEl.innerHTML = liStr ;
-                           
-                            
                               }
             
                         for(let i=0;i<chkbx.length;i++){
@@ -190,102 +397,97 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
                              }
      
                                   }
-                                  localStorage.setItem('color',bdy.style.background)
-                                  return false;
+                    localStorage.setItem('color',bdy.style.background)
+                    return false;
        
     })
 
 
-        function renderLeads(){
-            for(let i=0;i<myLeads.length;i++){
+
+       
+    function getEventTarget(e) {
+        e = e || window.event;
+        return e.target || e.srcElement; 
+        }
+        
+
+
+    //getting the note HTML with note content 
+    function renderLeads(){
+        for(let i=0;i<myLeads.length;i++){
                 
-                let demolead = JSON.stringify(myLeads[i]);
+            let demolead = JSON.stringify(myLeads[i]);
                 let lnkInd = demolead.indexOf('.');
                 // checking whether . is present to verify its link
                     if(lnkInd===-1){
                         liStr += 
-                        `<li> 
-                         <input type="checkbox" class="chk" ></br><label class="lbl">${myLeads[i]}</label></input>
-                        </li>` 
+                        ` <li class="li_notes" style="background-color: ${noteColor[i]}"> 
+                              <label  class="date_label">${dateArray[i]}</label>
+                                  <button class="view_btn" title="view full note content">view</button>
+                                      <label class="lbl">${myLeads[i]}</label>    
+                                         <input type="checkbox" class="chk" ></br>
+                                         
+                                             </input> 
+                                                   </li>` 
            
+
+
+
 
                     }else{
                         liStr += 
-                        `<li>
-                        <input type="checkbox" class="chk" ></input><label class="lbl"><a  
-                        target="_blank" href="${myLeads[i]}">${myLeads[i]} 
-                        </a></label>
-                        </li>`
+                        `<li class="li_notes" "background-color: ${noteColor[i]}"> 
+                            <label class="date_label">${dateArray[i]}</label> 
+                            <button class="view_btn" title="view full note content">view</button>
+                                <input type="checkbox" class="chk" ></input>
+                                 <label class="linklbl">
+                                     <a id="grabbed_url" target="_blank" href="${myLeads[i]}">${myLeads[i]}</a>
+                                        </label>
+                                             </li>`
     
                           }
      
                                }
 
                                     }
-  document.querySelectorAll('.chk').forEach( button => {
-                                       
-       button.onclick = function () {
-
-        if(this.id == 'mainchk'){
-            console.log('got me')
-            if (mainchk.checked==true){
-                for(let i=0;i<chkbx.length;i++){
-                    chkbx[i].checked = true;
-                    console.log('all true');
-             }
+    //selecting and unselecting checkboxes                                
+    document.querySelectorAll('.chk').forEach( button => {
+        button.onclick = function () {
+            if(this.id == 'mainchk'){
+                if (mainchk.checked==true){
+                    for(let i=0;i<chkbx.length;i++){
+                        chkbx[i].checked = true;
+                   }
            
                 
-            }else if(mainchk.checked==false){
-                for(let i=0;i<chkbx.length;i++){
-                    chkbx[i].checked = false;
-                    console.log('all false');
+                }else if(mainchk.checked==false){
+                    for(let i=0;i<chkbx.length;i++){
+                        chkbx[i].checked = false;
+               
                     }
                         }
-           }  
-        else {
-
-            console.log('next time')
-            let count = 0;
-            for(let i=0;i<chkbx.length;i++){
-                 if(chkbx[i].checked == true){
-                     console.log('case 1');
+           }else {
+                let count = 0;
+                    for(let i=0;i<chkbx.length;i++){
+                        if(chkbx[i].checked == true){
+                    
                                     }
-                   else{
-                     count =1;
-                     console.log('case 2');
-                              }
-                                                                     
-                                  }
+                        else{
+                          count =1;
+                    }
+                           }
                                                              
-                 if(count===1){
-                     console.log('case 3');
-                     mainchk.checked = false;
-                                                     
-                            }
-                 else{
-                     console.log('case 4');
-                     mainchk.checked = true;
+                if(count===1){
+                    mainchk.checked = false;
+                }else{
+                    mainchk.checked = true;
                             }
 
-        }
+              }
        
-       
-       
-
-
- 
-                                        
                         }
                                 });
-                                 
-            
-                         
-                                        
-                                    
-
-
-
-
+                                                         
 
         //saving offline on clicking download
         const el = (sel, par) => (par || document).querySelector(sel);
@@ -302,37 +504,12 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
                             };
 
 
-        // Usage on download button event click
-            let text= ulEl.textContent;
-            el("#download").addEventListener("click", () => {
-            createAndDownload(text, "text/plain");
+        // Download button event click
+        let text= ulEl.textContent;
+        el("#download").addEventListener("click", () => {
+        createAndDownload(text, "text/plain");
               });
 
-
-
-        //when select all checkbox is checked
-        mainchk.addEventListener('click',function(){
-          
-            // console.log('inside main chk');
-            // if (mainchk.checked==true){
-            //     for(let i=0;i<chkbx.length;i++){
-            //         chkbx[i].checked = true;
-            //         console.log('all true');
-            //  }
-           
-                
-            // }else if(mainchk.checked==false){
-            //     for(let i=0;i<chkbx.length;i++){
-            //         chkbx[i].checked = false;
-            //         console.log('all false');
-            //         }
-            //             }
-       
-                             })
- 
-    return false;
+     return false;
 })
-
-
-
 

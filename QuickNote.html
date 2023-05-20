@@ -7,46 +7,44 @@
     <title>QuickNote</title>
     <link rel="stylesheet" href="quicknote.css">
     <script src="quicknote.js"></script>
- </head>
+</head>
 <body>
   <div id="bdy">
-   
-    <div id="top_img">  
-      <div  id="cont_heading"><h1 id="note_heading">QuickNote</h1>
-      </div> 
-        </div>                                                      
-
-    <div id="cont_inp">
-          <form>
-            <!-- <textarea id="input-el" placeholder="Type here"></textarea> -->
-             <input  type="text" id="input-el" placeholder="Type here">
-             <input  type="submit" id="input-btn" value="Add Note">
-             <!-- <img id="btn_img" src='r_arrow.png'> -->
-             </button>
+        <div id="top_img">   
+           <div  id="cont_heading">
+             <h1 id="note_heading">QuickNote</h1>
+                 </div> 
+                   </div>                                                      
+                  
+        <div id="cont_inp">
+         <form>
+            <input type='submit' id="grab-btn" value="" title="Grab URL"> 
           </form>
-    </div>
+
+         <button type="button" id="new_style" title="Random colour"></button>
+         <input type="color" id="colorPicker" title="Select colour">
+          <form>
+            <input  type="text" id="input-el" placeholder="Add Title">
+            <textarea id="text_area" placeholder="Add more"></textarea> 
+            <input  type="submit" id="input-btn" value="" title="Add Note"></br>
+          </form>
+        </div>
   
-    <form >  
-      <div id="cont_link">
-        <button id="grab-btn">Grab Link</button>
-        
-        <button type="button" id="edit-btn" disabled>Edit</button>
-      </div>
-    </form>
+        <div id="div_li_shownote">
+           <div id="divshow_note"> </div>
+           <label id="recent_notes">My Notes</label>
+           <button type="button" id="download" title="Download as text"></button>
+           <button type="button" id="edit-btn" disabled title="Edit notes"></button>
+           <input type="checkbox" class="chk" id="mainchk"><label id="p_chk">Select All</label> </input>
+      
+           <!-- contains empty unordered list to contain listr from js to show notes and links   -->
+           <ul id="ul-el">   </ul>
 
-    <div id="cont_ul">
-   
-      <input type="checkbox" class="chk" id="mainchk"><label id="p_chk">Select All</label> </input>
-      <!-- contains empty unordered list to contain listr from js to show notes and links   -->
-      <ul id="ul-el">
-      </ul>
+        </div>
 
-    </div>
 
-      <div id="cont_dload_edit">
-        <button type="button" id="download">Save Offline</button>
-        <button  type="button" id="delete-btn" >New Style</button>
-    </div>
+
+
 
 </div>
 
