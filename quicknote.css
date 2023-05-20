@@ -623,10 +623,10 @@ body {
 #grabbed_url{
     position: relative;
     margin-top:0px ;
-    width: 110px;
+    width: 100px;
     word-wrap: break-word;
     font-size: 10px;
-    margin-left: 0px;
+    margin-left: 12px;
     color: black;
     text-align: center;
     display:flow-root;

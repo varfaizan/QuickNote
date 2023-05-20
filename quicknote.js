@@ -187,6 +187,9 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
             if(myLeads==null){ // otherwise myleads becomes null if fromlocal is deleted
                   myLeads=[];
                 }
+       
+       
+      
         let dateVal = new Date().toLocaleTimeString();
         dateArray.unshift(dateVal);
         localStorage.setItem('date',JSON.stringify(dateArray));
