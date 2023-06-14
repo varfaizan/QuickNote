@@ -1,6 +1,6 @@
 {
     "manifest_version":3,
-    "version":"1.3",
+    "version":"2",
     "name":"Quick Note",
     "action":{
         "default_popup":"QuickNote.html",

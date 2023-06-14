@@ -8,45 +8,88 @@
     <link rel="stylesheet" href="quicknote.css">
     <script src="quicknote.js"></script>
 </head>
-<body>
-  <div id="bdy">
-        <div id="top_img">   
-           <div  id="cont_heading">
-             <h1 id="note_heading">QuickNote</h1>
-                 </div> 
-                   </div>                                                      
-                  
-        <div id="cont_inp">
-         <form>
-            <input type='submit' id="grab-btn" value="" title="Grab URL"> 
-          </form>
-
-         <button type="button" id="new_style" title="Random colour"></button>
-         <input type="color" id="colorPicker" title="Select colour">
+<body id="body">
+  <div id="cont_all">
+       <div  id="cont_heading">
+             <label id="note_heading">QuickNote </label>
+         
+              
+              </div>
+           <div id="cont_greet"> <label id="user_greet"></label></div>
+                
+                  <div id="cont_search">
+                    <input type="text" id="search_notes" placeholder="Type to search" disabled>
+                       </div>  
+                  <div>
+                    <ul id="ul_category">
+                        </ul>
+                  <label id="show_category">Recent <img id="img_currentcategory" src="recent.png"></label>
+                   <button id="back_category"></button> 
+                   
+                  </div>
+                                                 
+                   <div id="top_note">
+                    <!-- <input type='submit' id="grab-btn" value="" title="Grab URL">
+                    <input type="color" id="colorPicker" title="Select colour">  -->
+                    <input  type="text" id="input-el" maxlength="20" placeholder="Add Title"> 
+                    
+                    <label id="count_text">0/20 words</label> 
+                    <input type='button' id="grab-btn" value="" title="Grab URL"> 
+                   </div>
+                   <div id="cont_inp">
+          
+          
+           
           <form>
-            <input  type="text" id="input-el" placeholder="Add Title">
-            <textarea id="text_area" placeholder="Add more"></textarea> 
-            <input  type="submit" id="input-btn" value="" title="Add Note"></br>
+            <!-- <input  type="text" id="input-el" placeholder="Add Title">        -->
+            <label id="count_textarea"></label>
+            <textarea id="text_area" placeholder="Start typing here..."></textarea>
+           
+           
+          
+            <button type="button" id="new_style" title="Clear text area"></button>
+            <!-- <input type="color" id="colorPicker" title="Select colour"> -->
+            <!-- <input  type="submit" id="input-btn" value="" title="Add Note"></br> -->
           </form>
+ 
         </div>
-  
+       
         <div id="div_li_shownote">
            <div id="divshow_note"> </div>
-           <label id="recent_notes">My Notes</label>
-           <button type="button" id="download" title="Download as text"></button>
-           <button type="button" id="edit-btn" disabled title="Edit notes"></button>
-           <input type="checkbox" class="chk" id="mainchk"><label id="p_chk">Select All</label> </input>
+         
+           <!-- <input type="text" id="search_notes" placeholder="Search">
+           <input  type="submit" id="search_btn" value="" title="Search"> -->
+         
+           <button type="button" id="edit_back"></button>
+           <!-- <button type="button" id="download" title="Download as text"></button> -->
+            <input type="checkbox" class="chk" id="mainchk"> </input>
       
            <!-- contains empty unordered list to contain listr from js to show notes and links   -->
            <ul id="ul-el">   </ul>
 
-        </div>
-
-
-
-
-
-</div>
-
-</body>
+           </div>
+            <div id="cont_bottom"> <button id="newnote_btn"></button>
+              <button id="home_btn"></button>
+              <button type="button" id="edit-btn" disabled title="Edit notes"></button>
+              <button type="button"  id="download" title="Download as text"></button>
+              
+              <button id="drop_btn"></button>
+              <button  type="button"  class="list_btns" id="refresh_btn">Reset</button>
+              <button  type="button"  class="list_btns" id="about_btn">About</button>
+       
+              <form>
+                <input type="color" id="colorPicker" title="Select colour">
+                <!-- <input type="color" id="colorPicker_edit" title="Select colour"> -->
+                <input  type="submit" id="input-btn" value="" title="Add Note"></br>
+         
+              </form>
+              
+              
+            </div>
+           
+          
+       </div>
+     
+         
+  </body>
 </html>
