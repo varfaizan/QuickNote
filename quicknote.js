@@ -188,26 +188,46 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
         let ContentInCategory = JSON.parse(localStorage.getItem(text_category));
         let objectCategory = Categorize(ContentInCategory,target.textContent,0)
         if (ContentInCategory){
-            if(text_category == 'Favourites'){
-                document.getElementById('show_category').innerHTML=`${text_category} <img id="img_currentcategory" src="love.png">`;
-            
-            }else  if(text_category == 'Important'){
-                document.getElementById('show_category').innerHTML=`${text_category} <img id="img_currentcategory" src="important.png">`;
-            
-            } else  if(text_category == 'Personal'){
-                document.getElementById('show_category').innerHTML=`${text_category} <img id="img_currentcategory" src="per.png">`;
-            
-            }
+          
             // edit_btn.style.visibility='hidden';
             backCategory.style.visibility='visible';
             ulEl.innerHTML="";
             liStr="";
             renderLeads(objectCategory.value,objectCategory.content,objectCategory.color,objectCategory.time,objectCategory.date);
             ulEl.innerHTML=liStr;
+            if(text_category == 'Favourites'){
+                document.getElementById('show_category').innerHTML=`${text_category} <img id="img_currentcategory" src="love.png">`;
+                for(let i =0;i<objectCategory.date.length;i++){
+                
+                    changeBackgroundImage(document.getElementsByClassName('tag_btnsfav')[i],noteContentIndex,Favourites,'fav',1);
+                    
+                }
+          
+            }else  if(text_category == 'Important'){
+                document.getElementById('show_category').innerHTML=`${text_category} <img id="img_currentcategory" src="important.png">`;
+                for(let i =0;i<objectCategory.date.length;i++){
+                
+                    changeBackgroundImage(document.getElementsByClassName('tag_btnsimp')[i],noteContentIndex,Important,'imp',1);
+                }
+            } else  if(text_category == 'Personal'){
+                document.getElementById('show_category').innerHTML=`${text_category} <img id="img_currentcategory" src="per.png">`;
+                for(let i =0;i<objectCategory.date.length;i++){
+                
+                    changeBackgroundImage(document.getElementsByClassName('tag_btnspersonal')[i],noteContentIndex,Personal,'personal',1);
+                }
+            }
+           
         }else {
             
         }
+
+       
+
+
+
+
         backCategory.style.visibility='visible';
+     
         clickLI();
     }
 
@@ -223,11 +243,11 @@ document.addEventListener('DOMContentLoaded',function(){ //run js only after doc
   
   
   for(let i=0;i<CategoryList.length;i++){
-    ulCategory.innerHTML+=`<li class="list_category">
+    ulCategory.innerHTML+=`<li class="list_category"  title="Notes added to ${CategoryList[i]} will appear here">
                             <label class = "noteCategory_count">0 notes</label> 
                                 <img class="img_category"src=forward.png >
                                     <label class="category_name">
-                                        ${CategoryList[i]}</label> </li>`
+                                        ${CategoryList[i]} </label> </li>`
 } 
 
 note_count();
@@ -258,6 +278,8 @@ const listItems = document.getElementsByClassName("list_category");
     
 
     document.getElementById('newnote_btn').onclick=function(){
+
+        
         if(document.getElementById('time_insidenote')){
         document.getElementById('time_insidenote').style.visibility='hidden';  }
         document.getElementById('show_category').style.visibility='hidden';
@@ -265,6 +287,12 @@ const listItems = document.getElementsByClassName("list_category");
         ulCategory.style.visibility='hidden';
         edit_btn.style.visibility='hidden';
        if(newNoteFlag===0){
+
+        for(let i=0;i<chkbx.length;i++){
+            backBtns[i].style.visibility='hidden';
+            
+        }
+            this.title = 'back';
             this.style.backgroundImage=`url('previous.png')`;
             this.style.marginTop = '5px';
             this.style.marginLeft = '80px';
@@ -283,6 +311,12 @@ const listItems = document.getElementsByClassName("list_category");
             newNoteFlag=1
        
        }else{
+
+        for(let i=0;i<chkbx.length;i++){
+            backBtns[i].style.visibility='visible';
+            
+        }
+
                document.getElementById('show_category').style.visibility='visible';
               textSearch.style.visibility='visible';
             //   searchBtn.style.visibility='visible';
@@ -291,6 +325,7 @@ const listItems = document.getElementsByClassName("list_category");
             contInp.style.visibility='hidden';
             document.getElementById('top_note').style.visibility='hidden';
             newNoteFlag=0;
+            this.title = 'Create New note';
             this.style.backgroundImage=`url('newnote.png')`;
             this.style.marginTop = '-20px';
             this.style.marginLeft = '130px';
@@ -392,17 +427,17 @@ const listItems = document.getElementsByClassName("list_category");
     
     
 
-        //     editSelectColor.addEventListener('change',function(event){
+            editSelectColor.addEventListener('change',function(event){
      
-        //         let editSelectedColor = event.target.value;
-        //          console.log(editSelectedColor);
-        //          notetobeColorEdit(editSelectedColor);
-        //    })
+                let editSelectedColor = event.target.value;
+                 console.log(editSelectedColor);
+                 notetobeColorEdit(editSelectedColor);
+           })
              
-        //     function notetobeColorEdit(editSelectedColor){
+            function notetobeColorEdit(editSelectedColor){
               
-        //             document.getElementById('text_insideNote').style.backgroundColor=editSelectedColor
-        //       }
+                    document.getElementById('text_insideNote').style.backgroundColor=editSelectedColor
+              }
        
                    
 
@@ -523,8 +558,11 @@ const listItems = document.getElementsByClassName("list_category");
 
 
 
-    function changeBackgroundImage(target,noteContentIndex,obj,imageName){
-        let flagCategory = 0;
+    function changeBackgroundImage(target,noteContentIndex,obj,imageName,source){
+        
+        let flagCategory=0;
+        let sourceCopy=source;
+     
         let targetCopy = target;
         let noteContentIndexCopy = noteContentIndex;
         let valueCopy;
@@ -536,13 +574,25 @@ const listItems = document.getElementsByClassName("list_category");
         let imageNameCopy = imageName;
         if(valueCopy.length>0){
             for(let i=0;i<valueCopy.length;i++){
-                if(valueCopy[i] == myLeads[noteContentIndexCopy]){
-                    targetCopy.style.backgroundImage=`url(${imageNameCopy}.png)`;
-                    flagCategory = 1;
-                }else if(flagCategory==0){
-                    targetCopy.style.backgroundImage=`url(${imageNameCopy}hover.png)`;
-                   
-                }
+
+               
+                    if(valueCopy[i] == myLeads[noteContentIndexCopy]){
+                        targetCopy.style.backgroundImage=`url(${imageNameCopy}.png)`;
+                        flagCategory = 1;
+                    }else if(flagCategory==0){
+                        targetCopy.style.backgroundImage=`url(${imageNameCopy}hover.png)`;
+                       
+                    }
+               
+                    if(valueCopy[i] == myLeads[noteContentIndexCopy]){
+                        targetCopy.style.backgroundImage=`url(${imageNameCopy}hover.png)`;
+                    
+                    }else if(flagCategory==0){
+                        targetCopy.style.backgroundImage=`url(${imageNameCopy}.png)`;
+                       
+                    }
+              
+             
             } 
         }else{
             targetCopy.style.backgroundImage=`url(${imageNameCopy}hover.png)`;
@@ -623,7 +673,12 @@ const listItems = document.getElementsByClassName("list_category");
       function clickLI(source){
       
         function viewNote(event){
-            selectColor.style.visibility='visible'
+            editSelectColor.style.visibility="visible";
+            for(let i=0;i<chkbx.length;i++){
+                backBtns[i].style.visibility='hidden';
+                
+            }
+       
             editClickStatus=0;
             edit_btn.style.backgroundImage='edit1';
             if(source=='delete'){
@@ -696,8 +751,8 @@ const listItems = document.getElementsByClassName("list_category");
                                                     <label class="dateyear_label" id="date_insidenote">${dateYearArray[noteContentIndex]}</label>
                                                 
                                   <textarea id="text_insideNote" ></textarea>
-                                  <button id="save_insideNote" ></button> 
-                                  <button id="back_insideNote" ></button> </div>`
+                                  <button id="save_insideNote" title="save changes"></button> 
+                                  <button id="back_insideNote" title="back"></button> </div>`
                     text_insideNote.value = noteContent[noteContentIndex];
                     input_note.value = myLeads[noteContentIndex];
                     text_insideNote.placeholder = 'Add here';
@@ -905,11 +960,12 @@ const listItems = document.getElementsByClassName("list_category");
                 labelNotes[noteContentIndex].textContent = text_insideNote.value;
                 let titleLabel=document.getElementsByClassName('title_label');
                 titleLabel[noteContentIndex].textContent = input_note.value;
-                document.getElementsByClassName('li_notes')[0].style.backgroundColor =  noteColor[noteContentIndex];
+                document.getElementsByClassName('li_notes')[noteContentIndex].style.backgroundColor =  noteColor[noteContentIndex];
                 ulEl.style.visibility='visible'  
                 ulCategory.style.visibility='visible';  
                 dload.style.visibility='visible';   
-                edit_btn.style.visibility='visible'
+                edit_btn.style.visibility='visible';
+                editSelectColor.style.visibility="hidden";
                 document.getElementById('newnote_btn').style.marginTop='-20px';
                 document.getElementById('newnote_btn').style.marginLeft='130px';
                 document.getElementById('newnote_btn').style.width='60px';
@@ -941,7 +997,8 @@ const listItems = document.getElementsByClassName("list_category");
             ulEl.style.visibility='visible'
             textSearch.style.visibility='visible';
             // searchBtn.style.visibility='visible';
-            ulCategory.style.visibility='visible'
+            ulCategory.style.visibility='visible';
+            editSelectColor.style.visibility="hidden";
                 document.getElementById('newnote_btn').style.marginTop='-20px';
                 document.getElementById('newnote_btn').style.marginLeft='130px';
                 document.getElementById('newnote_btn').style.width='60px';
@@ -1204,6 +1261,8 @@ const listItems = document.getElementsByClassName("list_category");
        if(textSearch.value===""){
         // ulEl.style.marginTop = '265px';
         // ulEl.style.height = '260px';
+        document.getElementById('show_category').innerHTML=`Recent <img id="img_currentcategory" src="recent.png">`; 
+    
         ulCategory.style.visibility='visible';
         document.getElementById('show_category').style.visibility='visible'; 
         edit_btn.style.visibility='visible';
@@ -1445,23 +1504,17 @@ const listItems = document.getElementsByClassName("list_category");
                                <div class="top_insideli"> 
                                   <label  class="title_label">${rendermyLeads[i]}</label>
                                       <input type="checkbox" class="chk" >  </input> 
-                                           <button class="done_btn" title="view full note content"></button>
-                                                  <button class="download_note"></button></div>
+                                           <button class="done_btn" title="Note completed"></button>
+                                                  <button class="download_note" title="Download note as txt"></button></div>
                                                          <label  class="date_label">${renderdateArray[i]}</label>
-                                                         <label class="dateyear_label">${renderdateYearArray[i]}</label>
-                                                         <button class="tag_btnsfav" id="fav_btn">  </button>  
-                                                         <button class="tag_btnsimp" id="imp_btn">  </button>   
-                                                         <button class="tag_btnspersonal" id="personal_btn">  </button>   
-                                                          
-                                                
-                                                         
-                                                                                                                             </li>` 
+                                                         <label  title="Date added" class="dateyear_label">${renderdateYearArray[i]}</label>
+                                                         <button title="Add to Favourites" class="tag_btnsfav" id="fav_btn">  </button>  
+                                                         <button title="Add to Important" class="tag_btnsimp" id="imp_btn">  </button>   
+                                                         <button title="Add to Personal" class="tag_btnspersonal" id="personal_btn">  </button>   
+                                                            </li>` 
                   
                                  }
                                 }
-     
-                               
-
                                     
     //selecting and unselecting checkboxes                                
     document.querySelectorAll('.chk').forEach( button => {
